@@ -192,6 +192,26 @@ func SetupCLI(args []string) error {
 			},
 		},
 		{
+			Name: "download",
+			Usage: "Mender Artifact to download - " +
+				"local file or a `URL`.",
+			ArgsUsage: "<IMAGEURL>",
+			Action: func(ctx *cli.Context) error {
+				runOptions.imageFile = ctx.Args().First()
+				if len(runOptions.imageFile) == 0 {
+					cli.ShowAppHelpAndExit(ctx, 1)
+				}
+				return runOptions.handleCLIOptions(ctx)
+			},
+		},
+		{
+			Name:  "apply",
+			Usage: "Apply the downloaded artifact",
+			Action: func(ctx *cli.Context) error {
+				return runOptions.handleCLIOptions(ctx)
+			},
+		},
+		{
 			Name: "rollback",
 			Usage: "Rollback current Artifact. Returns (2) " +
 				"if no update in progress.",
@@ -447,7 +467,7 @@ func SetupCLI(args []string) error {
 func (runOptions *runOptionsType) commonCLIHandler(
 	ctx *cli.Context) (*conf.MenderConfig, error) {
 
-	if ctx.Command.Name != "install" && ctx.Args().Len() > 0 {
+	if (ctx.Command.Name != "install" && ctx.Command.Name != "download") && ctx.Args().Len() > 0 {
 		return nil, errors.Errorf(
 			errMsgAmbiguousArgumentsGivenF,
 			ctx.Args().First())
@@ -525,6 +545,8 @@ func (runOptions *runOptionsType) handleCLIOptions(ctx *cli.Context) error {
 	case "show-artifact",
 		"show-provides",
 		"install",
+		"download",
+		"apply",
 		"commit",
 		"rollback":
 		return handleArtifactOperations(ctx, *runOptions, config)
