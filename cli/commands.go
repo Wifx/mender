@@ -215,6 +215,14 @@ func handleArtifactOperations(ctx *cli.Context, runOptions runOptionsType,
 		return app.DoStandaloneInstall(deviceManager, runOptions.imageFile,
 			runOptions.Config, vKey, stateExec, runOptions.rebootExitCode)
 
+	case "download":
+		vKey := config.GetVerificationKey()
+		return app.DoStandaloneDownload(deviceManager, runOptions.imageFile,
+			runOptions.Config, vKey, stateExec)
+
+	case "apply":
+		return app.DoStandaloneApply(deviceManager, stateExec)
+
 	case "commit":
 		return app.DoStandaloneCommit(deviceManager, stateExec)
 
