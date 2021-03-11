@@ -85,10 +85,7 @@ func DoStandaloneDownload(device *dev.DeviceManager, updateURI string,
 	defer image.Close()
 
 	fmt.Fprintf(os.Stdout, "Installing Artifact of size %d...\n", imageSize)
-	p := &utils.ProgressWriter{
-		Out: os.Stdout,
-		N:   imageSize,
-	}
+	p := utils.NewProgressWriter(imageSize)
 	tr := io.TeeReader(image, p)
 
 	standaloneData, err := doStandaloneInstallStatesDownload(ioutil.NopCloser(tr), vKey, device, stateExec)
